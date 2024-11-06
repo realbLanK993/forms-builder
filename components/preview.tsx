@@ -13,30 +13,45 @@ import { Textarea } from "./ui/textarea"
 
 const renderInput = (item: DataType) => {
     return (
-        <div className="flex flex-col gap-2">
-            <Label htmlFor={item.name}>{item.label} {item.required && <span className="text-red-500">*</span>}</Label>
-            <Input placeholder={item.placeholder} type={item.type} id={item.name} />
-        </div>
-    )
+      <div className="flex flex-col gap-2">
+          <Label htmlFor={item.name}>
+            {item.label}{" "}
+            {item.required && <span className="text-red-500">*</span>}
+          </Label>
+        <Input placeholder={item.placeholder} type={item.type} id={item.name} />
+        <span className="text-xs text-muted-foreground">
+          {item.description}
+        </span>
+      </div>
+    );
 }
 
 const renderTextarea = (item: DataType) => {
     return (
-        <div className="flex flex-col gap-2">
-            <Label htmlFor={item.name}>{item.label} {item.required && <span className="text-red-500">*</span>}</Label>
-            <Textarea placeholder={item.placeholder} id={item.name} />
-        </div>
-    )
+      <div className="flex flex-col gap-2">
+        <Label htmlFor={item.name}>
+          {item.label}{" "}
+          {item.required && <span className="text-red-500">*</span>}
+        </Label>
+        <Textarea placeholder={item.placeholder} id={item.name} />
+        <span className="text-xs text-muted-foreground">
+          {item.description}
+        </span>
+      </div>
+    );
 }
 
 const renderCheckbox = (item: DataType) => {
     return (
       <div className="flex flex-col gap-2">
         {item.label !== "" && (
-          <Label htmlFor={item.name}>
-            {item.label}{" "}
-            {item.required && <span className="text-red-500">*</span>}
-          </Label>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor={item.name}>
+              {item.label}{" "}
+              {item.required && <span className="text-red-500">*</span>}
+            </Label>
+            <span className="text-xs text-muted-foreground">{item.description}</span>
+          </div>
         )}
         {item.options?.map((option, index) => {
           return (
@@ -53,13 +68,16 @@ const renderCheckbox = (item: DataType) => {
 const renderDropdown = (item: DataType) => {
     return (
       <div className="flex flex-col gap-2 text-base">
-        <Label htmlFor={item.name}>
-          {item.label}{" "}
-          {item.required && <span className="text-red-500">*</span>}
-        </Label>
-        <Select
-          name={item.name}
-        >
+        <div className="flex flex-col gap-1">
+          <Label htmlFor={item.name}>
+            {item.label}{" "}
+            {item.required && <span className="text-red-500">*</span>}
+          </Label>
+          <span className="text-xs text-muted-foreground">
+            {item.description}
+          </span>
+        </div>
+        <Select name={item.name}>
           <SelectTrigger>
             <SelectValue placeholder={item.placeholder} />
           </SelectTrigger>
@@ -79,11 +97,16 @@ const renderDropdown = (item: DataType) => {
 
 const renderRadio = (item: DataType) => {
     return (
-      <div className="flex flex-col gap-2">
-        <Label htmlFor={item.name}>
-          {item.label}{" "}
-          {item.required && <span className="text-red-500">*</span>}
-        </Label>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <Label htmlFor={item.name}>
+            {item.label}{" "}
+            {item.required && <span className="text-red-500">*</span>}
+          </Label>
+          <span className="text-xs text-muted-foreground">
+            {item.description}
+          </span>
+        </div>
         {item.options?.map((option, index) => {
           return (
             <div key={index} className="flex items-center gap-2">
@@ -100,7 +123,7 @@ const renderRadio = (item: DataType) => {
 
 export default function Preview(){
     const {formData} = useFormData()
-    return (<div className="flex flex-col gap-4 p-2 py-8">
+    return (<div className="flex flex-col gap-4 px-2">
         {
             formData.map((item) => {
                 switch (item.type) {

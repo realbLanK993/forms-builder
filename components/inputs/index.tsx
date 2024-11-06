@@ -15,6 +15,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
+import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -23,7 +30,7 @@ import {
 
 import { CapitalizeFirstLetter } from "@/lib/utils";
 import BuilderSidebar from "../builder/sidebar";
-import { Copy, Trash } from "lucide-react";
+import { Check, Copy, EllipsisVertical, Trash } from "lucide-react";
 import { Switch } from "../ui/switch";
 import InputOptions from "./options";
 import { useFormData } from "@/context/formdata";
@@ -38,6 +45,7 @@ export default function InputCard({
   const [selected, setSelected] = useState<AnswerTypes>(currentItem.type);
   const { setFormData } = useFormData();
   const [focus, setFocus] = useState(firstValue);
+  const [description, setDescription] = useState(false);
   const elementRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     document.addEventListener("mousedown", handleOutsideClickOrKey);
@@ -126,6 +134,20 @@ export default function InputCard({
     });
   };
 
+  const onDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => {
+      return prev.map((input) => {
+        if (input.uuid === currentItem.uuid) {
+          return {
+            ...input,
+            description: e.target.value,
+          };
+        }
+        return input;
+      });
+    });
+  };
+
   const onDuplicate = () => {
     const newItem = JSON.parse(
       JSON.stringify({ ...currentItem, uuid: Date.now().toString() })
@@ -179,12 +201,10 @@ export default function InputCard({
         className="w-full h-full min-h-[200px] flex flex-col gap-4 justify-between p-4 input-card
       relative"
       >
-        <div className="h-full w-[6px] bg-gray-500 invisible absolute rounded-l focus-bar left-0 top-0" />
+        <div className="h-full w-[6px] bg-primary dark:bg-muted invisible absolute rounded-l-3xl focus-bar left-0 top-0" />
         <div className="flex gap-2">
           <div className="flex flex-col gap-2 w-full">
-            <p className="text-sm font-bold">
-              Label{" "}
-            </p>
+            <p className="text-sm font-bold">Label </p>
             <Input
               onChange={onLabelChange}
               defaultValue={currentItem.label}
@@ -193,9 +213,7 @@ export default function InputCard({
             />
           </div>
           <div className="flex flex-col gap-2">
-            <p className="text-sm font-bold">
-              Type
-            </p>
+            <p className="text-sm font-bold">Type</p>
             <Select
               onValueChange={(e) => setSelected(e as AnswerTypes)}
               value={selected}
@@ -213,6 +231,16 @@ export default function InputCard({
             </Select>
           </div>
         </div>
+        {description && (
+          <div className="flex flex-col gap-2 w-full">
+            <p className="text-sm font-bold">Description</p>
+            <Input
+              onChange={onDescriptionChange}
+              defaultValue={currentItem.description}
+              type="text"
+            />
+          </div>
+        )}
         <div className="flex gap-2">
           <div className="flex flex-col gap-2 w-full">
             <p className="text-sm font-bold">Name</p>
@@ -284,11 +312,24 @@ export default function InputCard({
           </div>
           <div className="border-r border-2 border-gray-300" />
           <div className="flex items-center font-bold gap-2">
-            <p className="text-xs">REQUIRED</p>
             <Switch
               defaultChecked={currentItem.required}
               onCheckedChange={onRequiredChange}
             />
+            <p className="text-xs">REQUIRED</p>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <EllipsisVertical size={20} />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="min-w-[180px]">
+                <DropdownMenuItem
+                  onClick={() => setDescription(!description)}
+                  className="flex justify-between items-center"
+                >
+                  Description {description && <Check size={16} />}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </Card>

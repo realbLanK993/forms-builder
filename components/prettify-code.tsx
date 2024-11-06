@@ -6,11 +6,13 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { Copy } from "lucide-react";
 import { Label } from "./ui/label";
+import { useTheme } from "next-themes";
 
-export default function CodeHighlight() {
+export default function CodeHighlight({react, typescript, css, tailwindcss, shadcn, rhf}: {react: boolean, typescript: boolean, css: boolean, tailwindcss: boolean, shadcn: boolean, rhf: boolean}) {
   const { formData } = useFormData();
-  const codeBlock = useGenerateData({ data: formData });
+  const codeBlock = useGenerateData({ data: formData, react, typescript, css, tailwindcss, shadcn, rhf }).main;
   const [copySuccess, setCopySuccess] = useState(false);
+  const {theme} = useTheme();
 
   const handleCopy = () => {
     navigator.clipboard.writeText(codeBlock)
@@ -24,7 +26,7 @@ export default function CodeHighlight() {
   };
 
   return (
-    <div className="p-2">
+    <div className="px-2">
       {/* <div>
         <Label className="text-base">Files in this page:</Label>
         <ul className="text-sm list-disc pl-8">
@@ -51,7 +53,7 @@ export default function CodeHighlight() {
         )}
       </div>
 
-      <Highlight theme={themes.nightOwl} code={codeBlock} language="tsx">
+      <Highlight theme={ theme == "light" ? themes.github : themes.nightOwl} code={codeBlock} language="tsx">
         {({ style, tokens, getTokenProps }) => (
           <pre className="p-0 m-0 pl-4 overflow-x-scroll" style={style}>
             {tokens.map((line, i) => (

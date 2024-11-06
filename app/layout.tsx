@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${poppins.className} antialiased w-full min-h-screen h-full flex flex-col gap-10 p-4`}
+        className={`${poppins.className} antialiased w-full min-h-screen h-full flex flex-col gap-10`}
       >
         <Providers>
           <RootNavbar />
