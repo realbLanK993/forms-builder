@@ -27,6 +27,7 @@ export type DataType = {
 
 export type OptionType = {
   uuid: string;
+  value: string;
   label: string;
 };
 

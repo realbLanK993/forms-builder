@@ -1,11 +1,11 @@
 import { AnswerTypes, DataType } from "./types/formdata";
 
-function convertString(str: string) {
-  return str
-    .split("")
-    .map((char) => char.toLowerCase().replace(" ", "_"))
-    .join("");
-}
+// function convertString(str: string) {
+//   return str
+//     .split("")
+//     .map((char) => char.toLowerCase().replace(" ", "_"))
+//     .join("");
+// }
 
 function generateShadcnInputCode({ item }: { item: DataType }) {
   return `
@@ -67,37 +67,37 @@ function generateShadcnTextareaCode({ item }: { item: DataType }) {
 function generateShadcnCheckboxCode({ item }: { item: DataType }) {
   return `
             <div className="flex flex-col gap-2">
-              <Label htmlFor="${item.name}">${item.label}  ${item.required ? `<span className="text-red-500">*</span>` : ""} </Label>
-              ${item.options?.map((option) => {
-                return `
-                    <div className="flex items-center gap-2">
+              <Label htmlFor="${item.name}">${item.label}  ${
+    item.required ? `<span className="text-red-500">*</span>` : ""
+  } </Label>
+              {
+                ${item.name}_items.map((option,index) => {
+                  return (
+                    <div id="${
+                      item.name
+                    }" key={index} className="flex items-center space-x-2">
                       <Checkbox
-                        onChange={() => {
+                        onCheckedChange={() => {
                           setData((data) => {
                             const newValue = data.${item.name}
-                            newValue.includes("${convertString(option.label)}")
-                              ? newValue.filter((value) => value !== "${convertString(
-                                option.label
-                              )}")
-                              : [...newValue, "${convertString(option.label)}"];
 
+                            newValue.includes(option.value) ? newValue.splice(newValue.indexOf(option.value), 1) : newValue.push(option.value)
                             return {
                               ...data,
                               ${item.name}: [...newValue],
-                            };
+                            }
                           })
                         }}
-                        checked={data.${item.name}.includes("${option.label}")}
-                        id="${convertString(option.label)}"
-                        value="${convertString(option.label)}"
-                        className="border"
+                        checked={data.${item.name}.includes(option.value)}
+                        id={option.value + "" + "${item.name}"}
                       />
-                      <Label htmlFor="${convertString(option.label)}">${
-                  option.label
-                }</Label>
+                      <Label htmlFor={option.value + "" + "${
+                        item.name
+                      }"}>{option.label}</Label>
                     </div>
-                  `;
-              }).join("")}
+                  )
+                })
+              }
               ${
                 item.description
                   ? `<p className="text-sm text-muted-foreground">${item.description}</p>`
@@ -115,12 +115,8 @@ const generateShadcnRadioCode = ({ item }: { item: DataType }) => {
               ${item.options?.map((option) => {
                 return `
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem id="${convertString(
-                        option.label
-                      )}" value="${convertString(option.label)}" />
-                      <Label htmlFor="${convertString(
-                        option.label
-                      )}">Option One</Label>
+                      <RadioGroupItem id="${item.name}_${option.value}" value="${option.value}" />
+                      <Label htmlFor="${item.name}_${option.value}">Option One</Label>
                     </div>
                   `;
               }).join("")}
@@ -151,11 +147,9 @@ const generateShadcnDropdownCode = ({ item }: { item: DataType }) => {
                 <SelectContent id="${item.name}">
                   ${item.options?.map((option) => {
                     return `
-                      <SelectItem value="${convertString(option.label)}">${
-                      option.label
-                    }</SelectItem>
+                      <SelectItem value="${option.value}">${option.label}</SelectItem>
                     `;
-                  })}
+                  }).join("")}
                 </SelectContent>
               </Select>
               ${
@@ -247,9 +241,7 @@ function generateRhfRadioCode({ item }: { item: DataType }) {
                           return `
                         <FormItem className="flex items-center space-x-3 space-y-0  gap-2">
                           <FormControl>
-                            <RadioGroupItem value="${convertString(
-                              option.label
-                            )}" />
+                            <RadioGroupItem value="${option.value}" />
                           </FormControl>
                           <FormLabel className="font-normal">
                             ${option.label}
@@ -277,7 +269,7 @@ function generateRhfDropdownCode({ item }: { item: DataType }) {
     item.required ? `<span className="text-red-500">*</span>` : ""
   } </FormLabel>
                   <Select defaultValue="${
-                    item.options && convertString(item.options[0].label)
+                    item.options && item.options[0].value
                   }"> 
                   </Select>
                   <Select name="${
@@ -294,9 +286,7 @@ function generateRhfDropdownCode({ item }: { item: DataType }) {
                         item.options
                           .map((option) => {
                             return `
-                        <SelectItem value="${convertString(option.label)}">${
-                              option.label
-                            }</SelectItem>`;
+                        <SelectItem value="${option.value}">${option.label}</SelectItem>`;
                           })
                           .join("")
                       }
@@ -403,10 +393,7 @@ function generateCheckboxData(data: DataType[]) {
         case "checkbox":
           const checkboxOptions = item.options
             ?.map(
-              (option) =>
-                `{ id: "${convertString(option.label)}", label: "${
-                  option.label
-                }" }`
+              (option) => `{ id: "${option.value}", label: "${option.label}", value: "${option.value}" }`
             )
             .join(", ");
           return `const ${item.name}_items = [${checkboxOptions}];`;
@@ -456,7 +443,7 @@ export default function useGenerateData({
   data,
   react,
   typescript,
-  css,
+  // css,
   tailwindcss,
   shadcn,
   rhf,
@@ -494,15 +481,14 @@ ${
     : ""
 }
 
-${rhf ? generateCheckboxData(data) : ``}
+${generateCheckboxData(data)}
 export default function FormComponent() {
     ${
       !rhf && react
-        ? `const [data, setData] = useState<FormSchema>({
+        ? `const [data, setData] = useState${typescript ? "<FormSchema>" : ``}({
         ${data
           .map((item) => {
-            return `
-        ${item.name}: ${item.type == "checkbox" ? "[]" : `""`},`;
+            return ` ${item.name}: ${item.type == "checkbox" ? "[]" : `""`},`;
           })
           .join("")}
       });`
@@ -523,10 +509,9 @@ export default function FormComponent() {
     }
     
     function onSubmit(${
-      rhf
-        ? `data${typescript ? ": FormSchema" : ``}`
+      rhf  ? `data${typescript ? `: FormSchema`: ``}` 
         : react
-        ? `e: React.FormEvent<HTMLFormElement>`
+        ? `e${typescript ? `: React.FormEvent<HTMLFormElement>` : ``}`
         : ``
     }) {
       console.log(data);
@@ -617,9 +602,6 @@ export default function FormComponent() {
 `;
 
   const cssValue = `
-*, ::before, ::after {
-  
-}
 .mb-4 {
   margin-bottom: 1rem;
 }
@@ -696,10 +678,9 @@ export default function FormComponent() {
 }
 
 `;
-
   return {
     main: result,
-    css: tailwindcss || css ? null : cssValue,
+    css: tailwindcss ? null : cssValue,
     js: null,
   };
 }

@@ -1,19 +1,9 @@
 // Add use client here if you are using Next.js
 //"use client"
+import { useState } from "react";
 
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-
 import { Input } from "@/components/ui/input";
 
 import {
@@ -23,32 +13,24 @@ import {
   SelectContent,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 
-const accept_items = [
-  {
-    id: "i_accept_to_terms_and_conditions",
-    label: "I accept to terms and conditions",
-  },
-];
+import { Label } from "@/components/ui/label";
+
 export default function FormComponent() {
-  const form = useForm({
-    defaultValues: {
-      username: "",
-      email: "",
-      password: "",
-      gender: "",
-      accept: [],
-    },
+  const [data, setData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    gender: "",
   });
-  function onSubmit(data) {
+
+  function onSubmit(e) {
     console.log(data);
     const requiredFields = {
-      username: false,
+      username: true,
       email: true,
       password: true,
       gender: false,
-      accept: true,
     };
     const hasRequiredFields = Object.keys(data).every((key) => {
       if (requiredFields[key]) {
@@ -63,6 +45,7 @@ export default function FormComponent() {
 
     if (!hasRequiredFields) {
       toast({ description: "Please fill in all required fields" });
+      e.preventDefault(); //Comment this line if you dont want to prevent default
       return;
     }
     toast({
@@ -73,150 +56,99 @@ export default function FormComponent() {
         </pre>
       ),
     });
+    e.preventDefault(); //Comment this line if you dont want to prevent default
   }
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="w-full flex flex-col gap-4 p-4"
-      >
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username </FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Enter your username"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>Is this unique?</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+    <form onSubmit={onSubmit} className="w-full flex flex-col gap-4 p-4">
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="username">
+          Username <span className="text-red-500">*</span>{" "}
+        </Label>
+        <Input
+          onChange={(e) => {
+            setData((data) => {
+              return {
+                ...data,
+                username: e.target.value,
+              };
+            });
+          }}
+          value={data.username}
+          id="username"
+          placeholder="Enter your username"
+          type="text"
+          className="border"
         />
+      </div>
 
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Email <span className="text-red-500">*</span>{" "}
-              </FormLabel>
-              <FormControl>
-                <Input type="email" placeholder="" {...field} />
-              </FormControl>
-              <FormDescription>Check for unique</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="email">
+          Email <span className="text-red-500">*</span>{" "}
+        </Label>
+        <Input
+          onChange={(e) => {
+            setData((data) => {
+              return {
+                ...data,
+                email: e.target.value,
+              };
+            });
+          }}
+          value={data.email}
+          id="email"
+          placeholder="Enter your email"
+          type="email"
+          className="border"
         />
+        <p className="text-sm text-muted-foreground">Provide an unique email</p>
+      </div>
 
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>
-                Password <span className="text-red-500">*</span>{" "}
-              </FormLabel>
-              <FormControl>
-                <Input
-                  type="password"
-                  placeholder="Enter your password"
-                  {...field}
-                />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="password">
+          Password <span className="text-red-500">*</span>{" "}
+        </Label>
+        <Input
+          onChange={(e) => {
+            setData((data) => {
+              return {
+                ...data,
+                password: e.target.value,
+              };
+            });
+          }}
+          value={data.password}
+          id="password"
+          placeholder="Enter your password"
+          type="password"
+          className="border"
         />
+        <p className="text-sm text-muted-foreground">
+          Password should be more than 8 characters
+        </p>
+      </div>
 
-        <FormField
-          control={form.control}
-          name="gender"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Gender </FormLabel>
-              <Select defaultValue="male"></Select>
-              <Select
-                name="gender"
-                onValueChange={field.onChange}
-                defaultValue={field.value}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your gender" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="male">Male</SelectItem>
-                  <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="gender">Gender</Label>
+        <Select
+          onValueChange={(value) =>
+            setData((data) => ({ ...data, gender: value }))
+          }
+          value={data.gender}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select your gender" />
+          </SelectTrigger>
+          <SelectContent id="gender">
+            <SelectItem value="male">Male</SelectItem>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <SelectItem value="female">Female</SelectItem>
 
-        <FormField
-          control={form.control}
-          name="accept"
-          render={() => (
-            <FormItem>
-              <div className="mb-4">
-                <FormLabel>
-                  {" "}
-                  <span className="text-red-500">*</span>{" "}
-                </FormLabel>
-              </div>
-              {accept_items.map((item) => (
-                <FormField
-                  key={item.id}
-                  control={form.control}
-                  name="accept"
-                  render={({ field }) => {
-                    return (
-                      <FormItem
-                        key={item.id}
-                        className="flex flex-row items-start space-x-3 space-y-0 gap-2"
-                      >
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(item.id)}
-                            onCheckedChange={(checked) => {
-                              return checked
-                                ? field.onChange([...field.value, item.id])
-                                : field.onChange(
-                                    field.value?.filter(
-                                      (value) => value !== item.id
-                                    )
-                                  );
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal">
-                          {item.label}
-                        </FormLabel>
-                      </FormItem>
-                    );
-                  }}
-                />
-              ))}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <SelectItem value="other">Other</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
 
-        <Button type="submit">Submit</Button>
-      </form>
-    </Form>
+      <Button type="submit">Submit</Button>
+    </form>
   );
 }

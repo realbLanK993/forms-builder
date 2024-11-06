@@ -179,7 +179,7 @@ export default function InputCard({
     () => () => {
       if (currentItem.options) return currentItem.options;
       const uuid = crypto.randomUUID();
-      return [{ label: "Option 1", checked: false, uuid }];
+      return [{ label: "Option 1", value:"option1", checked: false, uuid }];
     },
     [currentItem]
   );
@@ -261,7 +261,7 @@ export default function InputCard({
             />
           </div>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-4">
           {(currentItem.type == "checkbox" || currentItem.type == "radio") && (
             <p className="text-sm font-bold">Options</p>
           )}

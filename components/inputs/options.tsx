@@ -5,6 +5,7 @@ import { OptionType } from "@/lib/types/formdata";
 import { useFormData } from "@/context/formdata";
 import { Input } from "../ui/input";
 import { Trash } from "lucide-react";
+import { Label } from "../ui/label";
 export default function InputOptions({
   options,
   uuid,
@@ -31,14 +32,18 @@ export default function InputOptions({
     const uuidv4 = crypto.randomUUID();
     setOptionValue((prev) => [
       ...prev,
-      { uuid: uuidv4, label: `Option ${optionValue.length + 1}` },
+      {
+        uuid: uuidv4,
+        label: `Option ${optionValue.length + 1}`,
+        value: `option${optionValue.length + 1}`,
+      },
     ]);
   };
   const deleteOption = (uuid: string) => {
     setOptionValue((prev) => prev.filter((option) => uuid !== option.uuid));
   };
 
-  const onChange = (label: string, uuid: string) => {
+  const onLabelChange = (label: string, uuid: string) => {
     setOptionValue((prev) => {
       return prev.map((option) => {
         if (uuid == option.uuid) {
@@ -51,17 +56,45 @@ export default function InputOptions({
       });
     });
   };
+  const onValueChange = (value: string, uuid: string) => {
+    setOptionValue((prev) => {
+      return prev.map((option) => {
+        if (uuid == option.uuid) {
+          return {
+            ...option,
+            value,
+          };
+        }
+        return option;
+      });
+    });
+  };
 
   return (
     <div className="flex flex-col gap-2 w-full">
+      <div className="flex w-full gap-2">
+        <Label className="w-full pl-1">Label</Label>
+        <Label className="w-full pl-1">Value</Label>
+        <div className="w-20 h-1" />
+      </div>
       {optionValue.map((option, index) => {
         const firstValue = index == 0 ? true : false;
         return (
           <div key={option.uuid} className="flex gap-2 w-full">
-            <Input
-              onChange={(e) => onChange(e.target.value, option.uuid)}
-              defaultValue={option.label}
-            />
+            <div className="flex gap-2 w-full">
+              <Input
+                placeholder="Label"
+                onChange={(e) => onLabelChange(e.target.value, option.uuid)}
+                defaultValue={option.label}
+              />
+            </div>
+            <div className="flex gap-2 w-full">
+              <Input
+                onChange={(e) => onValueChange(e.target.value, option.uuid)}
+                defaultValue={option.value}
+              />
+            </div>
+
             <Button
               disabled={firstValue}
               onClick={() => deleteOption(option.uuid)}

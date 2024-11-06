@@ -4,23 +4,39 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { Input } from "@/components/ui/input";
 
-import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectItem,
+  SelectTrigger,
+  SelectContent,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { Label } from "@/components/ui/label";
 type FormSchema = {
-  username: string[];
+  username: string;
+  email: string;
+  password: string;
+  gender: string;
 };
 
 export default function FormComponent() {
   const [data, setData] = useState<FormSchema>({
-    username: [],
+    username: "",
+    email: "",
+    password: "",
+    gender: "",
   });
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     console.log(data);
     const requiredFields: Record<keyof FormSchema, boolean> = {
       username: true,
+      email: true,
+      password: true,
+      gender: false,
     };
     const hasRequiredFields = (
       Object.keys(data) as Array<keyof FormSchema>
@@ -54,77 +70,90 @@ export default function FormComponent() {
     <form onSubmit={onSubmit} className="w-full flex flex-col gap-4 p-4">
       <div className="flex flex-col gap-2">
         <Label htmlFor="username">
-          Checking <span className="text-red-500">*</span>{" "}
+          Username <span className="text-red-500">*</span>{" "}
         </Label>
+        <Input
+          onChange={(e) => {
+            setData((data) => {
+              return {
+                ...data,
+                username: e.target.value,
+              };
+            });
+          }}
+          value={data.username}
+          id="username"
+          placeholder="Enter your username"
+          type="text"
+          className="border"
+        />
+      </div>
 
-        <div className="flex items-center gap-2">
-          <Checkbox
-            onChange={() => {
-              setData((data) => {
-                const newValue = data.username;
-                newValue.includes("yes")
-                  ? newValue.filter((value) => value !== "yes")
-                  : [...newValue, "yes"];
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="email">
+          Email <span className="text-red-500">*</span>{" "}
+        </Label>
+        <Input
+          onChange={(e) => {
+            setData((data) => {
+              return {
+                ...data,
+                email: e.target.value,
+              };
+            });
+          }}
+          value={data.email}
+          id="email"
+          placeholder="Enter your email"
+          type="email"
+          className="border"
+        />
+        <p className="text-sm text-muted-foreground">Provide an unique email</p>
+      </div>
 
-                return {
-                  ...data,
-                  username: [...newValue],
-                };
-              });
-            }}
-            checked={data.username.includes("Yes")}
-            id="yes"
-            value="yes"
-            className="border"
-          />
-          <Label htmlFor="yes">Yes</Label>
-        </div>
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="password">
+          Password <span className="text-red-500">*</span>{" "}
+        </Label>
+        <Input
+          onChange={(e) => {
+            setData((data) => {
+              return {
+                ...data,
+                password: e.target.value,
+              };
+            });
+          }}
+          value={data.password}
+          id="password"
+          placeholder="Enter your password"
+          type="password"
+          className="border"
+        />
+        <p className="text-sm text-muted-foreground">
+          Password should be more than 8 characters
+        </p>
+      </div>
 
-        <div className="flex items-center gap-2">
-          <Checkbox
-            onChange={() => {
-              setData((data) => {
-                const newValue = data.username;
-                newValue.includes("no")
-                  ? newValue.filter((value) => value !== "no")
-                  : [...newValue, "no"];
+      <div className="flex flex-col gap-2">
+        <Label htmlFor="gender">Gender</Label>
+        <Select
+          onValueChange={(value) =>
+            setData((data) => ({ ...data, gender: value }))
+          }
+          value={data.gender}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select your gender" />
+          </SelectTrigger>
+          <SelectContent id="gender">
+            <SelectItem value="male">Male</SelectItem>
 
-                return {
-                  ...data,
-                  username: [...newValue],
-                };
-              });
-            }}
-            checked={data.username.includes("No")}
-            id="no"
-            value="no"
-            className="border"
-          />
-          <Label htmlFor="no">No</Label>
-        </div>
+            <SelectItem value="female">Female</SelectItem>
 
-        <div className="flex items-center gap-2">
-          <Checkbox
-            onChange={() => {
-              setData((data) => {
-                const newValue = data.username;
-                newValue.includes("maybe")
-                  ? newValue.filter((value) => value !== "maybe")
-                  : [...newValue, "maybe"];
-
-                return {
-                  ...data,
-                  username: [...newValue],
-                };
-              });
-            }}
-            checked={data.username.includes("Maybe")}
-            id="maybe"
-            value="maybe"
-            className="border"
-          />
-          <Label htmlFor="maybe">Maybe</Label>
-        </div>
+            <SelectItem value="other">Other</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <Button type="submit">Submit</Button>

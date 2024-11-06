@@ -1,8 +1,8 @@
 "use client"
-import FormComponent from "@/abc";
+// import FormComponent from "@/def.jsx";
 import Builder from "@/components/builder";
 import CodeHighlight from "@/components/prettify-code";
-// import Preview from "@/components/preview";
+import Preview from "@/components/preview";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -40,12 +40,13 @@ export default function Playground() {
         </TabsList>
         <TabsContent value="form" className="flex flex-col gap-4 py-2">
           <Card className="gap-4 flex flex-col p-4">
-            <p className="font-bold">Tech Stack</p>
+            <p className="font-bold">Tools</p>
             <div className="flex flex-row flex-wrap gap-4">
               <div className="flex gap-2 items-center">
                 <Checkbox
                   checked={react}
-                  disabled={rhf || shadcn}
+                  // disabled={rhf || shadcn}
+                  disabled
                   onCheckedChange={(checked) =>
                     setReact(checked ? true : false)
                   }
@@ -68,6 +69,7 @@ export default function Playground() {
               <div className="flex gap-2 items-center">
                 <Checkbox
                   checked={css}
+                  disabled
                   onCheckedChange={(checked) => setCss(checked ? true : false)}
                   id="css"
                   defaultChecked
@@ -88,7 +90,8 @@ export default function Playground() {
               <div className="flex gap-2 items-center">
                 <Checkbox
                   checked={shadcn}
-                  disabled={rhf}
+                  // disabled={rhf}
+                  disabled
                   onCheckedChange={(checked) =>
                     setShadcn(checked ? true : false)
                   }
@@ -121,7 +124,7 @@ export default function Playground() {
           />
         </TabsContent>
         <TabsContent value="preview">
-          <FormComponent />
+          <Preview />
         </TabsContent>
       </Tabs>
     </main>
