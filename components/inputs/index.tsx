@@ -2,7 +2,7 @@ import {
   DataType,
   options,
   OptionType,
-  ShortAnswerTypes,
+  AnswerTypes,
 } from "@/lib/types/formdata";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
@@ -35,7 +35,7 @@ export default function InputCard({
   currentItem: DataType;
   firstValue: boolean;
 }) {
-  const [selected, setSelected] = useState<ShortAnswerTypes>(currentItem.type);
+  const [selected, setSelected] = useState<AnswerTypes>(currentItem.type);
   const { setFormData } = useFormData();
   const [focus, setFocus] = useState(firstValue);
   const elementRef = useRef<HTMLDivElement>(null);
@@ -149,7 +149,7 @@ export default function InputCard({
       });
     });
   }, [selected]);
-  const availableOptionTypes: () => ShortAnswerTypes[] = useMemo(
+  const availableOptionTypes: () => AnswerTypes[] = useMemo(
     () => () => options,
     []
   );
@@ -183,7 +183,7 @@ export default function InputCard({
         <div className="flex gap-2">
           <div className="flex flex-col gap-2 w-full">
             <p className="text-sm font-bold">
-              Label <span className="text-red-500">*</span>{" "}
+              Label{" "}
             </p>
             <Input
               onChange={onLabelChange}
@@ -194,10 +194,10 @@ export default function InputCard({
           </div>
           <div className="flex flex-col gap-2">
             <p className="text-sm font-bold">
-              Type <span className="text-red-500">*</span>{" "}
+              Type
             </p>
             <Select
-              onValueChange={(e) => setSelected(e as ShortAnswerTypes)}
+              onValueChange={(e) => setSelected(e as AnswerTypes)}
               value={selected}
             >
               <SelectTrigger className="w-[200px]">
@@ -224,9 +224,7 @@ export default function InputCard({
             />
           </div>
           <div className="flex flex-col gap-2 w-full">
-            <p className="text-sm font-bold">
-              Placeholder
-            </p>
+            <p className="text-sm font-bold">Placeholder</p>
             <Input
               onChange={onPlaceholderChange}
               defaultValue={currentItem.placeholder}

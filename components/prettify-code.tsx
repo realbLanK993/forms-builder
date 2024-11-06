@@ -5,6 +5,7 @@ import { Highlight, themes } from "prism-react-renderer";
 import { useState } from "react";
 import { Button } from "./ui/button";
 import { Copy } from "lucide-react";
+import { Label } from "./ui/label";
 
 export default function CodeHighlight() {
   const { formData } = useFormData();
@@ -23,14 +24,33 @@ export default function CodeHighlight() {
   };
 
   return (
-    <div>
-      <div className="flex justify-end relative">
-        <Button size={"icon"} variant={"outline"} onClick={handleCopy} style={{ marginBottom: "10px" }}>
-        <Copy />
-      </Button>
-      {copySuccess && <span className="absolute -right-16 top-2 font-semibold text-sm" style={{ color: "green" }}>Copied!</span>}
+    <div className="p-2">
+      {/* <div>
+        <Label className="text-base">Files in this page:</Label>
+        <ul className="text-sm list-disc pl-8">
+          <li>Forms.tsx</li>
+        </ul>
+      </div> */}
+      <div className="flex justify-between items-center relative">
+        <Label>Forms.tsx</Label>
+        <Button
+          size={"icon"}
+          variant={"outline"}
+          onClick={handleCopy}
+          style={{ marginBottom: "10px" }}
+        >
+          <Copy />
+        </Button>
+        {copySuccess && (
+          <span
+            className="absolute -right-16 top-2 font-semibold text-sm"
+            style={{ color: "green" }}
+          >
+            Copied!
+          </span>
+        )}
       </div>
-      
+
       <Highlight theme={themes.nightOwl} code={codeBlock} language="tsx">
         {({ style, tokens, getTokenProps }) => (
           <pre className="p-0 m-0 pl-4 overflow-x-scroll" style={style}>

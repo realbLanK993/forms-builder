@@ -1,6 +1,6 @@
 import { AnswerTypes, DataType } from "./types/formdata";
 
-function generateCheckboxCode({ item }: { item: DataType }) {
+function generateShadcnCheckboxCode({ item }: { item: DataType }) {
   return `
             <FormField
               control={form.control}
@@ -60,84 +60,96 @@ function convertString(str:string){
     .map((char) => char.toLowerCase().replace(" ", "_"))
     .join("");
 }
-function generateRadioCode({ item }: { item: DataType }) {
+function generateShadcnRadioCode({ item }: { item: DataType }) {
   return `
-        <FormField
-          control={form.control}
-          name="${item.name}"
-          render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>${item.label}</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  ${item.options?.map((option) => {
-                    return `
-                    <FormItem className="flex items-center space-x-3 space-y-0  gap-2">
-                      <FormControl>
-                        <RadioGroupItem value="${convertString(option.label)}" />
-                      </FormControl>
-                      <FormLabel className="font-normal">
-                        ${option.label}
-                      </FormLabel>
-                    </FormItem> `
-                  }).join("")}
-                  
-                </RadioGroup>
-              </FormControl>
-              ${item.description ? `<FormDescription>${item.description}</FormDescription>`: ``}
-              <FormMessage />
-            </FormItem>
-          )}
-        />`;
+            <FormField
+              control={form.control}
+              name="${item.name}"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>${item.label}</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex flex-col space-y-1"
+                    >
+                      ${item.options
+                        ?.map((option) => {
+                          return `
+                        <FormItem className="flex items-center space-x-3 space-y-0  gap-2">
+                          <FormControl>
+                            <RadioGroupItem value="${convertString(
+                              option.label
+                            )}" />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            ${option.label}
+                          </FormLabel>
+                        </FormItem> `;
+                        })
+                        .join("")}
+                      
+                    </RadioGroup>
+                  </FormControl>
+                  ${
+                    item.description
+                      ? `<FormDescription>${item.description}</FormDescription>`
+                      : ``
+                  }
+                  <FormMessage />
+                </FormItem>
+              )}
+            />`;
 }
 
-function generateDropdownCode({ item }: { item: DataType }) {
+function generateShadcnDropdownCode({ item }: { item: DataType }) {
   return `
-  <FormField
-          control={form.control}
-          name="${item.name}"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>${item.label}</FormLabel>
-              <Select defaultValue="${
-                item.options && convertString(item.options[0].label)
-              }"> 
-              </Select>
-              <Select name="${
-                item.name
-              }"  onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="${item.placeholder}" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
+            <FormField
+              control={form.control}
+              name="${item.name}"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>${item.label}</FormLabel>
+                  <Select defaultValue="${
+                    item.options && convertString(item.options[0].label)
+                  }"> 
+                  </Select>
+                  <Select name="${
+                    item.name
+                  }"  onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="${item.placeholder}" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      ${
+                        item.options &&
+                        item.options
+                          .map((option) => {
+                            return `
+                        <SelectItem value="${convertString(option.label)}">${
+                              option.label
+                            }</SelectItem>`;
+                          })
+                          .join("")
+                      }
+                    </SelectContent>
+                  </Select>
                   ${
-                    item.options &&
-                    item.options
-                      .map((option) => {
-                        return `
-                    <SelectItem value="${convertString(option.label)}">${
-                          option.label
-                        }</SelectItem>`;
-                      })
-                      .join("")
+                    item.description
+                      ? `<FormDescription>${item.description}</FormDescription>`
+                      : ``
                   }
-                </SelectContent>
-              </Select>
-              ${item.description ? `<FormDescription>${item.description}</FormDescription>`: ``}
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
   `;
 }
 
-function generateInputCode({ item }: { item: DataType }) {
+function generateShadcnInputCode({ item }: { item: DataType }) {
   return `
             <FormField
               control={form.control}
@@ -146,9 +158,15 @@ function generateInputCode({ item }: { item: DataType }) {
                 <FormItem>
                   <FormLabel>${item.label}</FormLabel>
                   <FormControl>
-                    <Input type="${item.type}" placeholder="${item.placeholder}" {...field} />
+                    <Input type="${item.type}" placeholder="${
+    item.placeholder
+  }" {...field} />
                   </FormControl>
-                  ${item.description ? `<FormDescription>{item.description}</FormDescription>`: ``}
+                  ${
+                    item.description
+                      ? `<FormDescription>{item.description}</FormDescription>`
+                      : ``
+                  }
                   <FormMessage />
                 </FormItem>
               )}
@@ -156,29 +174,32 @@ function generateInputCode({ item }: { item: DataType }) {
   `;
 }
 
-function generateTextareaCode ({ item }: { item: DataType }) {
+function generateShadcnTextareaCode({ item }: { item: DataType }) {
   return `
-          <FormField
-            control={form.control}
-            name=${item.name}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>${item.label}</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder=${item.placeholder}
-                    {...field}
-                  />
-                </FormControl>
-                ${item.description && `<FormDescription>{item.description}</FormDescription>`}
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name=${item.name}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>${item.label}</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder=${item.placeholder}
+                      {...field}
+                    />
+                  </FormControl>
+                  ${
+                    item.description &&
+                    `<FormDescription>{item.description}</FormDescription>`
+                  }
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
   `;
 }
 
-function generateImports({ data }: { data: DataType[] }) {
+function generateShadcnImports({ data }: { data: DataType[] }) {
   return `
 ${ data.filter(item => item.type !== "checkbox" && item.type !== "radio" && item.type !== "dropdown").length > 0 ? `import { Input } from "@/components/ui/input";`: ""}
 
@@ -254,7 +275,7 @@ FormMessage,
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-${generateImports({ data })}
+${generateShadcnImports({ data })}
 type FormSchema = { ${data
     .map((item) => {
       return `
@@ -267,38 +288,39 @@ ${generateCheckboxData(data)}
 
 export default function FormComponent() {
     const form = useForm<FormSchema>({ 
-        defaultValues: {${data
-          .map((item) => {
-            return `
-            ${item.name}: ${item.type == "checkbox" ? "[]" : `""`},`;
-          })
-          .join("")}
-        } 
-      });
-      function onSubmit(data:FormSchema) {
-        toast({
-          title: "You submitted the following values:",
-          description: (
-            <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-              <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-            </pre>
-          ),
+      defaultValues: {${data
+        .map((item) => {
+          return `
+          ${item.name}: ${item.type == "checkbox" ? "[]" : `""`},`;
         })
-      }
+        .join("")}
+      } 
+    });
+    function onSubmit(data:FormSchema) {
+      console.log(data);
+      toast({
+        title: "You submitted the following values:",
+        description: (
+          <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+            <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          </pre>
+        ),
+      });
+    }
     return (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="w-full flex flex-col gap-4 p-4">${data
             .map((item) => {
               return `${
                 item.type === "checkbox"
-                  ? generateCheckboxCode({ item })
+                  ? generateShadcnCheckboxCode({ item })
                   : item.type === "radio"
-                  ? generateRadioCode({ item })
+                  ? generateShadcnRadioCode({ item })
                   : item.type === "dropdown"
-                  ? generateDropdownCode({ item })
+                  ? generateShadcnDropdownCode({ item })
                   : item.type === "textarea"
-                  ? generateTextareaCode({ item })
-                  : generateInputCode({ item })
+                  ? generateShadcnTextareaCode({ item })
+                  : generateShadcnInputCode({ item })
               } `;
             })
             .join("")}

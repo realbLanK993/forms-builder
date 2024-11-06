@@ -1,7 +1,7 @@
 import FormComponent from "@/abc";
 import Builder from "@/components/builder";
 import CodeHighlight from "@/components/prettify-code";
-import Preview from "@/components/preview";
+// import Preview from "@/components/preview";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
