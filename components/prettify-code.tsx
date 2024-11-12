@@ -14,18 +14,43 @@ export default function CodeHighlight({react, typescript, css, tailwindcss, shad
   const fullData = useGenerateData({ data: formData, react, typescript, css, tailwindcss, shadcn, rhf });
   const codeBlock = fullData.main
   const cssBlock = fullData.css;
+  const jsBlock = fullData.js
   const [copySuccess, setCopySuccess] = useState(false);
   const {theme} = useTheme();
   const [tab, setTab] = useState<string>("main");
   const handleCopy = () => {
-    navigator.clipboard.writeText(codeBlock)
-      .then(() => {
-        setCopySuccess(true);
-        setTimeout(() => setCopySuccess(false), 2000); // Clear success message after 2 seconds
-      })
-      .catch(err => {
-        console.error("Failed to copy: ", err);
-      });
+    if(tab === "jsBlock"){
+      navigator.clipboard
+        .writeText(jsBlock ?? "")
+        .then(() => {
+          setCopySuccess(true);
+          setTimeout(() => setCopySuccess(false), 2000); // Clear success message after 2 seconds
+        })
+        .catch((err) => {
+          console.error("Failed to copy: ", err);
+        });
+    }else if(tab === "css"){
+      navigator.clipboard
+        .writeText(cssBlock ?? "")
+        .then(() => {
+          setCopySuccess(true);
+          setTimeout(() => setCopySuccess(false), 2000); // Clear success message after 2 seconds
+        })
+        .catch((err) => {
+          console.error("Failed to copy: ", err);
+        });
+    }else{
+      navigator.clipboard
+        .writeText(codeBlock)
+        .then(() => {
+          setCopySuccess(true);
+          setTimeout(() => setCopySuccess(false), 2000); // Clear success message after 2 seconds
+        })
+        .catch((err) => {
+          console.error("Failed to copy: ", err);
+        });
+    }
+      
   };
   return (
     <div className="px-2">
