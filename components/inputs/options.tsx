@@ -6,6 +6,7 @@ import { useFormData } from "@/context/formdata";
 import { Input } from "../ui/input";
 import { Trash } from "lucide-react";
 import { Label } from "../ui/label";
+import { correctText } from "@/lib/utils";
 export default function InputOptions({
   options,
   uuid,
@@ -62,7 +63,7 @@ export default function InputOptions({
         if (uuid == option.uuid) {
           return {
             ...option,
-            value,
+            value: correctText(value),
           };
         }
         return option;

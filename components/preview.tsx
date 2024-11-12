@@ -111,9 +111,9 @@ const renderCheckbox = (
                   }));
                 }
               }}
-              id={option.label}
+              id={option.value}
             />
-            <Label htmlFor={option.label}>{option.label}</Label>
+            <Label htmlFor={option.value}>{option.label}</Label>
           </div>
         );
       })}
@@ -152,7 +152,7 @@ const renderDropdown = (
         <SelectContent>
           {item.options?.map((option, index) => {
             return (
-              <SelectItem key={index} value={option.label}>
+              <SelectItem key={index} value={option.value}>
                 {option.label}
               </SelectItem>
             );
@@ -193,7 +193,7 @@ const renderRadio = (
               <RadioGroupItem
                 id={option.value}
                 value={option.value}
-                checked={data[item.name] === option.value}
+                defaultChecked={data[item.name] === option.value}
               />
               <Label htmlFor={option.value}>{option.label}</Label>
             </div>

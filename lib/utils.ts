@@ -21,3 +21,7 @@ export const findDuplicateNames = (data: DataType[]) => {
     })
     .filter((name) => name !== null);
 };
+
+export const correctText = (text: string) => {
+  return text.replaceAll(" ", "_".toLowerCase())
+};
