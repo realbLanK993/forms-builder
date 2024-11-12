@@ -579,18 +579,36 @@ function generateTypes(type: AnswerTypes) {
   }
 }
 
-function generateCheckboxData(data: DataType[]) {
-  return data
-    .map((item) => {
-      const checkboxOptions = item.options
-        ?.map(
-          (option) =>
-            `{ id: "${option.value}", label: "${option.label}", value: "${option.value}" }`
-        )
-        .join(", ");
-      return `const ${item.name}_items = [${checkboxOptions}];`;
-    })
-    .join("\n");
+function generateCheckboxData(data: DataType[], shadcn:boolean) {
+  if(shadcn){
+    return data
+      .map((item) => {
+        if(item.type === "checkbox"){
+          const checkboxOptions = item.options
+            ?.map(
+              (option) =>
+                `{ id: "${option.value}", label: "${option.label}", value: "${option.value}" }`
+            )
+            .join(", ");
+          return `const ${item.name}_items = [${checkboxOptions}];`;
+        }
+      })
+      .join("\n");
+  }else if(!shadcn){
+    return data
+      .map((item) => {
+        if (item.type === "checkbox" || item.type === "radio" || item.type === "dropdown") {
+          const checkboxOptions = item.options
+            ?.map(
+              (option) =>
+                `{ id: "${option.value}", label: "${option.label}", value: "${option.value}" }`
+            )
+            .join(", ");
+          return `const ${item.name}_items = [${checkboxOptions}];`;
+        }
+      })
+      .join("\n");
+  }else return "";
 }
 
 function generateShadcnImports({ data,shadcn }: { data: DataType[] , shadcn: boolean }) {
@@ -673,26 +691,7 @@ ${
     : ""
 }
 
-${
-  shadcn && data.filter((item) => item.type === "checkbox").length > 0
-    ? generateCheckboxData(data)
-    : !shadcn &&
-      data.filter(
-        (item) =>
-          item.type === "checkbox" ||
-          item.type === "radio" ||
-          item.type === "dropdown"
-      ).length > 0
-    ? generateCheckboxData(
-        data.filter(
-          (item) =>
-            item.type === "checkbox" ||
-            item.type === "radio" ||
-            item.type === "dropdown"
-        )
-      )
-    : ``
-}
+${generateCheckboxData(data, shadcn)}
 export default function FormComponent() {
     ${react && shadcn ? `const {toast} = useToast();` : ``}
     ${
