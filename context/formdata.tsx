@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 
 const initialData: DataType = {
   uuid: crypto.randomUUID(),
-  name: "username",
+  name: "text_" + crypto.randomUUID().split("-")[0],
   label: "Username",
   type: "text",
   placeholder: "",

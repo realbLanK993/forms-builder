@@ -8,11 +8,16 @@ import {
 } from "@/components/ui/tooltip";
 import { useFormData } from "@/context/formdata";
 import { DataType } from "@/lib/types/formdata";
+
+const generateName = (type: string) =>
+  `${type}_${crypto.randomUUID().split("-")[0]}`;
+
 export default function BuilderSidebar({ uuid }: { uuid: string }) {
   const { formData, setFormData } = useFormData();
   const firstValue = formData.findIndex((item) => item.uuid === uuid) == 0;
   const lastValue = formData.findIndex((item) => item.uuid === uuid) == 
     formData.length - 1;
+  const currentIndex = formData.findIndex((item) => item.uuid === uuid);
   return (
     <Card className="h-full w-[40px] flex flex-col rounded sidebar-card invisible opacity-0">
       <TooltipProvider>
@@ -21,7 +26,7 @@ export default function BuilderSidebar({ uuid }: { uuid: string }) {
             onClick={() => {
               const initialData: DataType = {
                 uuid: crypto.randomUUID(),
-                name: "username",
+                name: generateName( formData[currentIndex].type),
                 label: "Username",
                 type: "text",
                 placeholder: "",

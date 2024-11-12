@@ -38,9 +38,11 @@ import { useFormData } from "@/context/formdata";
 export default function InputCard({
   currentItem,
   firstValue,
+  duplicate,
 }: {
   currentItem: DataType;
   firstValue: boolean;
+  duplicate: boolean;
 }) {
   const [selected, setSelected] = useState<AnswerTypes>(currentItem.type);
   const { setFormData } = useFormData();
@@ -79,13 +81,13 @@ export default function InputCard({
       }
     }
   };
-  const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onNameChange = (e:string) => {
     setFormData((prev) => {
       return prev.map((input) => {
         if (input.uuid === currentItem.uuid) {
           return {
             ...input,
-            name: e.target.value,
+            name: e,
           };
         }
         return input;
@@ -162,29 +164,34 @@ export default function InputCard({
     });
   };
   useEffect(() => {
+    const randomUUID = crypto.randomUUID().split("-")[0];
     setFormData((prev) => {
       return prev.map((item) => {
         if (currentItem.uuid === item.uuid) {
-          return { ...currentItem, type: selected };
+          console.log(item);
+          
+          return { ...currentItem, type: selected};
         }
         return item;
       });
     });
+    onNameChange(`${selected}_${randomUUID}`);
   }, [selected]);
-  const availableOptionTypes: () => AnswerTypes[] = useMemo(
-    () => () => options,
+
+  const availableOptionTypes: AnswerTypes[] = useMemo(
+    () => options,
     []
   );
-  const initialCheckboxOptions: () => OptionType[] = useMemo(
-    () => () => {
+  const initialCheckboxOptions: OptionType[] = useMemo(
+    () => {
       if (currentItem.options) return currentItem.options;
       const uuid = crypto.randomUUID();
       return [{ label: "Option 1", value:"option1", checked: false, uuid }];
     },
     [currentItem]
   );
-  const initialRadioOptions: () => OptionType[] = useMemo(
-    () => () => {
+  const initialRadioOptions: OptionType[] = useMemo(
+    () => {
       if (currentItem.options) return currentItem.options;
       const uuid = crypto.randomUUID();
       return [{ label: "Option 1", value: "option1", uuid }];
@@ -198,8 +205,8 @@ export default function InputCard({
       className="flex gap-2 w-full parent"
     >
       <Card
-        className="w-full h-full min-h-[200px] flex flex-col gap-4 justify-between p-4 input-card
-      relative"
+        className={`w-full h-full min-h-[200px] flex flex-col gap-4 justify-between p-4 input-card
+      relative ${duplicate ? `border-2 border-destructive`:``}`}
       >
         <div className="h-full w-[6px] bg-primary dark:bg-muted invisible absolute rounded-l-3xl focus-bar left-0 top-0" />
         <div className="flex gap-2">
@@ -222,7 +229,7 @@ export default function InputCard({
                 <SelectValue placeholder="Input Type" />
               </SelectTrigger>
               <SelectContent>
-                {availableOptionTypes().map((option) => (
+                {availableOptionTypes.map((option) => (
                   <SelectItem key={option} value={option}>
                     {CapitalizeFirstLetter(option)}
                   </SelectItem>
@@ -245,8 +252,8 @@ export default function InputCard({
           <div className="flex flex-col gap-2 w-full">
             <p className="text-sm font-bold">Name</p>
             <Input
-              onChange={onNameChange}
-              defaultValue={currentItem.name}
+              onChange={(e) => onNameChange(e.target.value)}
+              value={currentItem.name}
               required={currentItem.required}
               type="text"
             />
@@ -268,19 +275,19 @@ export default function InputCard({
           {currentItem.type == "checkbox" && (
             <InputOptions
               uuid={currentItem.uuid}
-              options={initialCheckboxOptions()}
+              options={initialCheckboxOptions}
             />
           )}
           {currentItem.type == "radio" && (
             <InputOptions
               uuid={currentItem.uuid}
-              options={initialRadioOptions()}
+              options={initialRadioOptions}
             />
           )}
           {currentItem.type == "dropdown" && (
             <InputOptions
               uuid={currentItem.uuid}
-              options={initialRadioOptions()}
+              options={initialRadioOptions}
             />
           )}
         </div>

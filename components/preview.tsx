@@ -14,9 +14,10 @@ import {
 } from "./ui/select";
 import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RadioGroup, RadioGroupItem } from "./ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
+import { findDuplicateNames } from "@/lib/utils";
 
 const renderInput = (
   item: DataType,
@@ -205,6 +206,7 @@ const renderRadio = (
 
 export default function Preview() {
   const { formData } = useFormData();
+  const duplicateNames = useMemo(() => findDuplicateNames(formData), [formData]);
   const { toast } = useToast();
   const initialData: { [key: string]: string | string[] } = useMemo(() => {
     return formData.reduce((acc, item) => {
@@ -230,6 +232,18 @@ export default function Preview() {
       e.preventDefault();
     }
   };
+  useEffect(() => {
+    if (duplicateNames.length > 0) {
+      toast({
+        title: "Duplicate names found",
+        description: (
+          <pre>
+            <code>{JSON.stringify(duplicateNames, null, 2)}</code>
+          </pre>
+        ),
+      });
+    }
+  }, [duplicateNames]);
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4 px-2">
       {formData.map((item) => {
