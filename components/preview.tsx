@@ -140,7 +140,7 @@ const renderDropdown = (
         name={item.name}
       >
         <SelectTrigger>
-          <SelectValue placeholder={item.placeholder} />
+          <SelectValue placeholder={item.placeholder == "" ?  "Select an option" : item.placeholder} />
         </SelectTrigger>
         <SelectContent>
           {item.options?.map((option, index) => {
