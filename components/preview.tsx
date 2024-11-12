@@ -209,7 +209,11 @@ export default function Preview() {
   }, [formData]);
   const [data, setData] = useState(initialData);
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    if (formData.some((item) => item.required && !data[item.name])) {
+    if (formData.every((item) => {
+      if(Array.isArray((data[item.name]))){
+        return (data[item.name] as string[]).length == 0;
+      } else return item.required && !data[item.name];
+    })) {
       toast({ description: "Please fill in all the required fields" });
       e.preventDefault();
     }

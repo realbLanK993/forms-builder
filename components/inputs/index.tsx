@@ -209,7 +209,7 @@ export default function InputCard({
       relative ${duplicate ? `border-2 border-destructive`:``}`}
       >
         <div className="h-full w-[6px] bg-primary dark:bg-muted invisible absolute rounded-l-3xl focus-bar left-0 top-0" />
-        <div className="flex gap-2">
+        <div className="flex flex-col md:flex-row gap-2">
           <div className="flex flex-col gap-2 w-full">
             <p className="text-sm font-bold">Label </p>
             <Input
@@ -248,7 +248,7 @@ export default function InputCard({
             />
           </div>
         )}
-        <div className="flex gap-2">
+        <div className="flex flex-col md:flex-row gap-2">
           <div className="flex flex-col gap-2 w-full">
             <p className="text-sm font-bold">Name</p>
             <Input
@@ -291,8 +291,8 @@ export default function InputCard({
             />
           )}
         </div>
-        <div className="flex gap-8 w-full justify-end">
-          <div className="flex gap-8">
+        <div className="flex gap-4 md:gap-8 w-full justify-end">
+          <div className="flex gap-4 md:gap-8">
             <TooltipProvider>
               <Tooltip delayDuration={0}>
                 <TooltipTrigger onClick={onDuplicate}>
