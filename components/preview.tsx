@@ -77,6 +77,16 @@ const renderCheckbox = (
     React.SetStateAction<{ [key: string]: string | string[] }>
   >
 ) => {
+  const handleChange = (optionValue: string) => {
+    setData((prevData) => {
+      const currentValues = prevData[item.name] as string[] || [];
+      const newValues = currentValues.includes(optionValue)
+        ? currentValues.filter((value) => value !== optionValue)
+        : [...currentValues, optionValue];
+
+      return { ...prevData, [item.name]: newValues };
+    });
+  };
   return (
     <div className="flex flex-col gap-2">
       {item.label !== "" && (
@@ -90,33 +100,16 @@ const renderCheckbox = (
           </span>
         </div>
       )}
-      {item.options?.map((option, index) => {
-        return (
-          <div key={index} className="flex items-center gap-2">
-            <Checkbox
-              checked={data[item.name].includes(option.value)}
-              onChange={() => {
-                const currentValues = data[item.name] as string[];
-                if (currentValues.includes(option.value)) {
-                  setData((data) => ({
-                    ...data,
-                    [item.name]: currentValues.filter(
-                      (value) => value !== option.value
-                    ),
-                  }));
-                } else {
-                  setData((data) => ({
-                    ...data,
-                    [item.name]: [...currentValues, option.value],
-                  }));
-                }
-              }}
-              id={option.value}
-            />
-            <Label htmlFor={option.value}>{option.label}</Label>
-          </div>
-        );
-      })}
+      {item.options?.map((option) => (
+        <div key={option.value} className="flex items-center gap-2">
+          <Checkbox
+            id={`${item.name}-${option.value}`}
+            checked={(data[item.name] as string[] || []).includes(option.value)}
+            onCheckedChange={() => handleChange(option.value)}
+          />
+          <Label htmlFor={`${item.name}-${option.value}`}>{option.label}</Label>
+        </div>
+      ))}
     </div>
   );
 };
@@ -246,7 +239,7 @@ export default function Preview() {
   }, [duplicateNames]);
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4 px-2">
-      {formData.map((item) => {
+      {data && formData.map((item) => {
         switch (item.type) {
           case "checkbox":
             return <div key={item.uuid}>{renderCheckbox(item, data, setData)}</div>
