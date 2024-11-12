@@ -7,6 +7,199 @@ import { AnswerTypes, DataType } from "./types/formdata";
 //     .join("");
 // }
 
+function generateReactInputCode({ item }: { item: DataType }) {
+  return `
+            <div className="flex flex-col gap-2">
+              <label htmlFor="${item.name}">${item.label}  ${
+    item.required ? `<span className="text-red-500">*</span>` : ""
+  } </label>
+              <input
+                onChange={(e) => {
+                  setData((data) => {
+                    return {
+                      ...data,
+                      ${item.name}: e.target.value,
+                    };
+                  })
+                }}
+                value={data.${item.name}}
+                id="${item.name}"
+                placeholder="${item.placeholder}"
+                type="${item.type}"
+              />
+              ${
+                item.description
+                  ? `<p className="text-sm text-muted-foreground">${item.description}</p>`
+                  : ``
+              }
+            </div>
+  `;
+              }
+
+function generateReactTextareaCode({ item }: { item: DataType }) {
+  return `
+            <div className="flex flex-col gap-2">
+              <label htmlFor="${item.name}">${item.label}  ${
+    item.required ? `<span className="text-red-500">*</span>` : ""
+  } </label>
+              <textarea
+                onChange={(e) => {
+                  setData((data) => {
+                    return {
+                      ...data,
+                      ${item.name}: e.target.value,
+                    };
+                  })
+                }}
+                value={data.${item.name}}
+                id="${item.name}"
+                placeholder="${item.placeholder}"
+              />
+              ${
+                item.description
+                  ? `<p className="text-sm text-muted-foreground">${item.description}</p>`
+                  : ``
+              }
+            </div>
+  `;
+}
+
+function generateReactCheckboxCode({ item }: { item: DataType }) {
+  return `
+            <div className="flex flex-col gap-2">
+              <label htmlFor="${item.name}">${item.label}  ${
+    item.required ? `<span className="text-red-500">*</span>` : ""
+  } </label>
+              {
+                ${item.name}_items.map((option,index) => {
+                  return (
+                    <div id="${
+                      item.name
+                    }" key={index} className="flex items-center space-x-2">
+                      <input
+                        name="${item.name}"
+                        type="checkbox"
+                        onChange={() => {
+                          const newValue = [...data.${item.name}];
+                          setData((data) => {
+                            if (newValue.includes(option.value)) {
+                              const updatedValue = newValue.filter((item) => item !== option.value);
+                              return {
+                                ...data,
+                                ${item.name}: updatedValue,
+                              };
+                            } else {
+                              return {
+                                ...data,
+                                ${item.name}: [...newValue, option.value],
+                              };
+                            }
+                          })
+                        }}
+                        checked={data.${item.name}.includes(option.value)}
+                        id={option.value + "" + "${item.name}"}
+                      />
+                      <label htmlFor={option.value + "" + "${
+                        item.name
+                      }"}>{option.label}</label>
+                    </div>
+                  )
+                })
+              }
+              ${
+                item.description
+                  ? `<p className="text-sm text-muted-foreground">${item.description}</p>`
+                  : ``
+              }
+            </div>
+  `;
+}
+
+function generateReactRadioCode({ item }: { item: DataType }) {
+  return `
+            <div className="flex flex-col gap-2">
+              <label htmlFor="${item.name}">${item.label}  ${
+    item.required ? `<span className="text-red-500">*</span>` : ""
+  } </label>
+              {
+                ${item.name}_items.map((option,index) => {
+                  return (
+                    <div id="${
+                      item.name
+                    }" key={index} className="flex items-center space-x-2">
+                      <input
+                        name="${item.name}"
+                        type="radio"
+                        onChange={(e) => {
+                          setData((data) => {
+                            return {
+                              ...data,
+                              ${item.name}: e.target.value,
+                            };  
+                          })
+                        }}
+                        value={option.value}
+                        id={option.value + "" + "${item.name}"}
+                      />
+                      <label htmlFor={option.value + "" + "${
+                        item.name
+                      }"}>{option.label}</label>
+                    </div>
+                  )
+                })
+              }
+              ${
+                item.description
+                  ? `<p className="text-sm text-muted-foreground">${item.description}</p>`
+                  : ``
+              }
+            </div>
+  `;
+                      }
+
+function generateReactDropdownCode({ item }: { item: DataType }) {
+  return `
+            <div className="flex flex-col gap-2">
+              <label htmlFor="${item.name}">${item.label}  ${
+    item.required ? `<span className="text-red-500">*</span>` : ""
+  } </label>
+              <select
+                onChange={(e) => {
+                  setData((data) => {
+                    return {
+                      ...data,
+                      ${item.name}: e.target.value,
+                    };
+                  })
+                }}
+                value={data.${item.name}}
+                id="${item.name}"
+              >
+                
+                  ${
+                    item.placeholder ?
+                    `<option disabled selected value="">${item.placeholder}</option>` : 
+                    `<option disabled selected value="">Select an option</option>`
+                  }
+                  {
+                  ${item.name}_items.map((option,index) => {
+                    return (
+                      <option key={index} value={option.value}>{option.label}</option>
+                    )
+                })
+              }
+              </select>
+              ${
+                item.description
+                  ? `<p className="text-sm text-muted-foreground">${item.description}</p>`
+                  : ``
+              }
+            </div>
+  `;
+}
+
+
+
 function generateShadcnInputCode({ item }: { item: DataType }) {
   return `
             <div className="flex flex-col gap-2">
@@ -389,17 +582,13 @@ function generateTypes(type: AnswerTypes) {
 function generateCheckboxData(data: DataType[]) {
   return data
     .map((item) => {
-      switch (item.type) {
-        case "checkbox":
-          const checkboxOptions = item.options
-            ?.map(
-              (option) => `{ id: "${option.value}", label: "${option.label}", value: "${option.value}" }`
-            )
-            .join(", ");
-          return `const ${item.name}_items = [${checkboxOptions}];`;
-        default:
-          return "";
-      }
+      const checkboxOptions = item.options
+        ?.map(
+          (option) =>
+            `{ id: "${option.value}", label: "${option.label}", value: "${option.value}" }`
+        )
+        .join(", ");
+      return `const ${item.name}_items = [${checkboxOptions}];`;
     })
     .join("\n");
 }
@@ -468,7 +657,10 @@ ${
 ${!rhf && react ? `import { useState } from "react";` : ``}
 ${shadcn ? generateShadcnImports({ shadcn, data }) : ``}
 ${rhf ? generateRhfImports() : ``}
-${!rhf && react ? `import { Label } from "@/components/ui/label"` : ``}
+${
+  !rhf && react && shadcn ? `import { Label } from "@/components/ui/label"` : ``
+}
+${react && shadcn ? `import { useToast } from "@/hooks/use-toast";` : ``}
 ${
   typescript
     ? `type FormSchema = { ${data
@@ -481,8 +673,28 @@ ${
     : ""
 }
 
-${generateCheckboxData(data)}
+${
+  shadcn && data.filter((item) => item.type === "checkbox").length > 0
+    ? generateCheckboxData(data)
+    : !shadcn &&
+      data.filter(
+        (item) =>
+          item.type === "checkbox" ||
+          item.type === "radio" ||
+          item.type === "dropdown"
+      ).length > 0
+    ? generateCheckboxData(
+        data.filter(
+          (item) =>
+            item.type === "checkbox" ||
+            item.type === "radio" ||
+            item.type === "dropdown"
+        )
+      )
+    : ``
+}
 export default function FormComponent() {
+    ${react && shadcn ? `const {toast} = useToast();` : ``}
     ${
       !rhf && react
         ? `const [data, setData] = useState${typescript ? "<FormSchema>" : ``}({
@@ -509,7 +721,8 @@ export default function FormComponent() {
     }
     
     function onSubmit(${
-      rhf  ? `data${typescript ? `: FormSchema`: ``}` 
+      rhf
+        ? `data${typescript ? `: FormSchema` : ``}`
         : react
         ? `e${typescript ? `: React.FormEvent<HTMLFormElement>` : ``}`
         : ``
@@ -536,7 +749,11 @@ export default function FormComponent() {
      });
 
       if (!hasRequiredFields) {
-        toast({ description: "Please fill in all required fields" })
+        ${
+          shadcn
+            ? `toast({ description: "Please fill in all required fields" });`
+            : `alert("Please fill in all required fields");`
+        }
         ${
           react && !rhf
             ? `e.preventDefault(); //Comment this line if you dont want to prevent default`
@@ -554,13 +771,15 @@ export default function FormComponent() {
           </pre>
         ),
       })
-      ${
-        react && !rhf
-          ? `e.preventDefault(); //Comment this line if you dont want to prevent default`
-          : ``
-      }
+      
       ;`
-          : ``
+          : `
+          ${
+            react && !rhf
+              ? `e.preventDefault(); //Comment this line if you dont want to prevent default`
+              : ``
+          }
+          alert(JSON.stringify(data, null, 2));`
       }
     }
     return (
@@ -590,11 +809,25 @@ export default function FormComponent() {
             : item.type === "textarea"
             ? generateShadcnTextareaCode({ item })
             : generateShadcnInputCode({ item })
+          : react && !shadcn && !rhf
+          ? item.type === "checkbox"
+            ? generateReactCheckboxCode({ item })
+            : item.type === "radio"
+            ? generateReactRadioCode({ item })
+            : item.type === "dropdown"
+            ? generateReactDropdownCode({ item })
+            : item.type === "textarea"
+            ? generateReactTextareaCode({ item })
+            : generateReactInputCode({ item })
           : ""
       } `;
     })
     .join("")}
-            <Button type="submit">Submit</Button>
+            ${
+              react && shadcn
+                ? `<Button type="submit">Submit</Button>`
+                : `<button type="submit">Submit</button>`
+            }
           </form>
         ${rhf ? `</Form>` : ``}
     );

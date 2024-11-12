@@ -1,8 +1,9 @@
 "use client"
-// import FormComponent from "@/def.jsx";
+// import FormComponent from "@/abc";
+import FormComponent from "@/def.jsx";
 import Builder from "@/components/builder";
 import CodeHighlight from "@/components/prettify-code";
-import Preview from "@/components/preview";
+// import Preview from "@/components/preview";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -90,8 +91,7 @@ export default function Playground() {
               <div className="flex gap-2 items-center">
                 <Checkbox
                   checked={shadcn}
-                  // disabled={rhf}
-                  disabled
+                  disabled={rhf}
                   onCheckedChange={(checked) =>
                     setShadcn(checked ? true : false)
                   }
@@ -124,7 +124,7 @@ export default function Playground() {
           />
         </TabsContent>
         <TabsContent value="preview">
-          <Preview />
+          <FormComponent />
         </TabsContent>
       </Tabs>
     </main>

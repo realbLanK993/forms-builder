@@ -2,41 +2,47 @@
 //"use client"
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
-import { Input } from "@/components/ui/input";
-
-import {
-  Select,
-  SelectItem,
-  SelectTrigger,
-  SelectContent,
-  SelectValue,
-} from "@/components/ui/select";
-
-import { Label } from "@/components/ui/label";
 type FormSchema = {
   username: string;
-  email: string;
-  password: string;
   gender: string;
+  multiple: string[];
+  single: string;
 };
 
+const gender_items = [
+  { id: "option1", label: "Option 1", value: "option1" },
+  { id: "option2", label: "Option 2", value: "option2" },
+  { id: "option3", label: "Option 3", value: "option3" },
+  { id: "option4", label: "Option 4", value: "option4" },
+];
+const multiple_items = [
+  { id: "option1", label: "Option 1", value: "option1" },
+  { id: "option2", label: "Option 2", value: "option2" },
+  { id: "option3", label: "Option 3", value: "option3" },
+  { id: "option4", label: "Option 4", value: "option4" },
+  { id: "option5", label: "Option 5", value: "option5" },
+];
+const single_items = [
+  { id: "option1", label: "Option 1", value: "option1" },
+  { id: "option2", label: "Option 2", value: "option2" },
+  { id: "option3", label: "Option 3", value: "option3" },
+  { id: "option4", label: "Option 4", value: "option4" },
+];
 export default function FormComponent() {
   const [data, setData] = useState<FormSchema>({
     username: "",
-    email: "",
-    password: "",
     gender: "",
+    multiple: [],
+    single: "",
   });
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     console.log(data);
     const requiredFields: Record<keyof FormSchema, boolean> = {
       username: true,
-      email: true,
-      password: true,
-      gender: false,
+      gender: true,
+      multiple: true,
+      single: true,
     };
     const hasRequiredFields = (
       Object.keys(data) as Array<keyof FormSchema>
@@ -52,27 +58,21 @@ export default function FormComponent() {
     });
 
     if (!hasRequiredFields) {
-      toast({ description: "Please fill in all required fields" });
+      alert("Please fill in all required fields");
       e.preventDefault(); //Comment this line if you dont want to prevent default
       return;
     }
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+
     e.preventDefault(); //Comment this line if you dont want to prevent default
+    alert(JSON.stringify(data, null, 2));
   }
   return (
     <form onSubmit={onSubmit} className="w-full flex flex-col gap-4 p-4">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="username">
+        <label htmlFor="username">
           Username <span className="text-red-500">*</span>{" "}
-        </Label>
-        <Input
+        </label>
+        <input
           onChange={(e) => {
             setData((data) => {
               return {
@@ -83,80 +83,118 @@ export default function FormComponent() {
           }}
           value={data.username}
           id="username"
-          placeholder="Enter your username"
+          placeholder=""
           type="text"
-          className="border"
         />
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email">
-          Email <span className="text-red-500">*</span>{" "}
-        </Label>
-        <Input
+        <label htmlFor="gender">
+          Gender <span className="text-red-500">*</span>{" "}
+        </label>
+        <select
           onChange={(e) => {
             setData((data) => {
               return {
                 ...data,
-                email: e.target.value,
+                gender: e.target.value,
               };
             });
           }}
-          value={data.email}
-          id="email"
-          placeholder="Enter your email"
-          type="email"
-          className="border"
-        />
-        <p className="text-sm text-muted-foreground">Provide an unique email</p>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="password">
-          Password <span className="text-red-500">*</span>{" "}
-        </Label>
-        <Input
-          onChange={(e) => {
-            setData((data) => {
-              return {
-                ...data,
-                password: e.target.value,
-              };
-            });
-          }}
-          value={data.password}
-          id="password"
-          placeholder="Enter your password"
-          type="password"
-          className="border"
-        />
-        <p className="text-sm text-muted-foreground">
-          Password should be more than 8 characters
-        </p>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="gender">Gender</Label>
-        <Select
-          onValueChange={(value) =>
-            setData((data) => ({ ...data, gender: value }))
-          }
           value={data.gender}
+          id="gender"
         >
-          <SelectTrigger>
-            <SelectValue placeholder="Select your gender" />
-          </SelectTrigger>
-          <SelectContent id="gender">
-            <SelectItem value="male">Male</SelectItem>
-
-            <SelectItem value="female">Female</SelectItem>
-
-            <SelectItem value="other">Other</SelectItem>
-          </SelectContent>
-        </Select>
+          <option disabled selected value="">
+            Select an option
+          </option>
+          {gender_items.map((option, index) => {
+            return (
+              <option key={index} value={option.value}>
+                {option.label}
+              </option>
+            );
+          })}
+        </select>
       </div>
 
-      <Button type="submit">Submit</Button>
+      <div className="flex flex-col gap-2">
+        <label htmlFor="multiple">
+          Check multiple <span className="text-red-500">*</span>{" "}
+        </label>
+        {multiple_items.map((option, index) => {
+          return (
+            <div
+              id="multiple"
+              key={index}
+              className="flex items-center space-x-2"
+            >
+              <input
+                name="multiple"
+                type="checkbox"
+                onChange={() => {
+                  const newValue = [...data.multiple];
+                  setData((data) => {
+                    if (newValue.includes(option.value)) {
+                      const updatedValue = newValue.filter(
+                        (item) => item !== option.value
+                      );
+                      return {
+                        ...data,
+                        multiple: updatedValue,
+                      };
+                    } else {
+                      return {
+                        ...data,
+                        multiple: [...newValue, option.value],
+                      };
+                    }
+                  });
+                }}
+                checked={data.multiple.includes(option.value)}
+                id={option.value + "" + "multiple"}
+              />
+              <label htmlFor={option.value + "" + "multiple"}>
+                {option.label}
+              </label>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <label htmlFor="single">
+          Check single <span className="text-red-500">*</span>{" "}
+        </label>
+        {single_items.map((option, index) => {
+          return (
+            <div
+              id="single"
+              key={index}
+              className="flex items-center space-x-2"
+            >
+              <input
+                name="single"
+                type="radio"
+                onChange={(e) => {
+                  setData((data) => {
+                    return {
+                      ...data,
+                      single: e.target.value,
+                    };
+                  });
+                }}
+                value={option.value}
+                id={option.value + "" + "single"}
+              />
+              <label htmlFor={option.value + "" + "single"}>
+                {option.label}
+              </label>
+            </div>
+          );
+        })}
+      </div>
+
+      <button type="submit">Submit</button>
     </form>
   );
 }
