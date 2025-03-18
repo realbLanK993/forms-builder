@@ -1,6 +1,6 @@
 "use client"
 // import FormComponent from "@/abc";
-// import FormComponent from "@/def.jsx";
+import FormComponent from "@/def.jsx";
 import Builder from "@/components/builder";
 import CodeHighlight from "@/components/prettify-code";
 import Preview from "@/components/preview";
@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useEffect, useState } from "react";
+import Wysiwyg from "@/components/wysiwyg";
 
 export default function Playground() {
   const [react, setReact] = useState(true);
@@ -111,7 +112,8 @@ export default function Playground() {
               </div>
             </div>
           </Card>{" "}
-          <Builder />
+          {/* <Builder /> */}
+          <Wysiwyg />
         </TabsContent>
         <TabsContent value="code">
           <CodeHighlight
@@ -125,6 +127,7 @@ export default function Playground() {
         </TabsContent>
         <TabsContent value="preview">
           <Preview />
+          {/* <FormComponent /> */}
         </TabsContent>
       </Tabs>
     </main>

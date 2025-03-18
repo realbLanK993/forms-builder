@@ -1,6 +1,6 @@
 "use client";
 import { useFormData } from "@/context/formdata";
-import useGenerateData from "@/lib/hooks";
+import useGenerateData from "@/lib/code-generation";
 import { Highlight, themes } from "prism-react-renderer";
 import { useState } from "react";
 import { Button } from "./ui/button";
