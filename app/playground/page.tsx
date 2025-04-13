@@ -1,13 +1,11 @@
-"use client"
+"use client";
 // import FormComponent from "@/abc";
-import FormComponent from "@/def.jsx";
-import Builder from "@/components/builder";
 import CodeHighlight from "@/components/prettify-code";
 import Preview from "@/components/preview";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
 import Wysiwyg from "@/components/wysiwyg";
 
@@ -20,17 +18,16 @@ export default function Playground() {
   const [rhf, setRhf] = useState(true);
 
   useEffect(() => {
-    if(!react && rhf){
+    if (!react && rhf) {
       setReact(true);
     }
-    if(!react && shadcn){
+    if (!react && shadcn) {
       setReact(true);
     }
-    if(!shadcn && rhf){
+    if (!shadcn && rhf) {
       setShadcn(true);
     }
   }, [react, shadcn, rhf]);
-
 
   return (
     <main className="flex gap-4 flex-1 w-full h-full p-4">
